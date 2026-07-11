@@ -38,8 +38,22 @@ onAuthStateChanged(auth, async u => {
   window.USER = u;
   if(u){
     // Carrega perfil do Firestore
-    const perfil = await getDoc(doc(db,'usuarios',u.uid)).catch(()=>null);
-    window.PERFIL = perfil?.data() || { role:'SEM_PERFIL', tenantId:'' };
+   const perfil = await getDoc(doc(db,'usuarios',u.uid));
+
+console.log(
+  'PERFIL FIRESTORE:',
+  perfil.exists(),
+  perfil.data()
+);
+
+if(perfil.exists()){
+  window.PERFIL = perfil.data();
+}else{
+  window.PERFIL = {
+    role:'SEM_PERFIL',
+    tenantId:''
+  };
+}
     window.IS_SUPER = window.PERFIL.role==='SUPER_ADMIN';
     window.IS_GESTOR= window.PERFIL.role==='GESTOR'||window.IS_SUPER;
     showApp(); iniciarApp();
